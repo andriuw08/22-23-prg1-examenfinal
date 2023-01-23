@@ -28,35 +28,33 @@ public class Pacman {
         int[] posicionFantasma = { 5, 10 };
         int points = 0;
         int turnosInvencibilidad = 0; 
-        String[] terreno = {
-            " ",
-            "#",
-            ".",
-            "X"
-        };
+        int limiteInferior=0; 
+		int limiteSuperior=unaMatriz.length-1;
+		int limiteIzquierdo=0;
+		int limiteDerecho=unaMatriz[0].length-1;
+        int skin = 0;
+        String[][] terreno = {
+			{" ","  ","   "},
+			{"#","##","###"},
+			{".","()"," O "},
+			{"*","><"," X "}
+		};
 
 
         do {
-            System.out.println("La cantidad de puntos es de: " + points + "/ invencibilidad: " + turnosInvencibilidad);
+            System.out.println("La cantidad de puntos es de: " + points + "/ invencibilidad: " + turnosInvencibilidad + " La skin es: " + skin);
+            
             if( turnosInvencibilidad >= 1 ) {
                 turnosInvencibilidad = turnosInvencibilidad - 1;
             }
             for (int laFila = 0; laFila < unaMatriz.length; laFila++) {
                 for (int laColumna = 0; laColumna < unaMatriz[laFila].length; laColumna++) {
                     if (laFila == posicionPersonaje[0] && laColumna == posicionPersonaje[1]) {
-                        System.out.print("P");
+                          imprimePacman(skin);
                     } else if (laFila == posicionFantasma[0] && laColumna == posicionFantasma[1]) {
-                        System.out.print("F");
+                          imprimeFantasma(skin);
                     } else {
-                        if (unaMatriz[laFila][laColumna] == 0) {
-                            System.out.print(terreno[0]);
-                        } else if (unaMatriz[laFila][laColumna] == 1) {
-                            System.out.print(terreno[1]);
-                        } else if (unaMatriz[laFila][laColumna] == 2) {
-                             System.out.print(terreno[2]);
-                        } else if (unaMatriz[laFila][laColumna] == 3) {
-                             System.out.print(terreno[3]);
-                        }
+                          imprimeTerreno(unaMatriz[laFila][laColumna], skin);
                     }
                 }
                 System.out.println();
@@ -78,6 +76,11 @@ public class Pacman {
                     break;
                 case 'f', 'F':
                     terminar = true;
+                case 'v', 'V':
+                    skin = skin + 1;
+                    if ( skin>2 ) 
+                        skin=0;
+                    break;
             }
 
             //Funcionalidad de las pastillas
@@ -93,6 +96,33 @@ public class Pacman {
                 turnosInvencibilidad = turnosInvencibilidad + 15;
 			}
 
+            //Mundo Toroidal
+            if (posicionPersonaje[0]<limiteInferior) {posicionPersonaje[0]=limiteSuperior;}
+			if (posicionPersonaje[0]>limiteSuperior) {posicionPersonaje[0]=limiteInferior;}
+			if (posicionPersonaje[1]<limiteIzquierdo) {posicionPersonaje[1]=limiteDerecho;}
+			if (posicionPersonaje[1]>limiteDerecho) {posicionPersonaje[1]=limiteIzquierdo;}
         } while (!terminar);
     }
+
+    //Cambio de skin
+    static void imprimeTerreno(int unTile, int skin){
+		
+		String[][] terreno = {
+			{" ","  ","   "},
+			{"#","##","###"},
+			{".","()"," O "},
+			{"*","><"," X "}
+		};
+		System.out.print(terreno[unTile][skin]);
+	}	
+	
+	static void imprimePacman(int skin){
+		String[] pacman = {"P","PP","PPP"};
+		System.out.print(pacman[skin]);
+	}
+	
+	static void imprimeFantasma(int skin){
+		String[] fantasma = {"F","FF","FFF"};
+		System.out.print(fantasma[skin]);
+	}
 }
